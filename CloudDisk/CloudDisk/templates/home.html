@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云盘首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 240px;
+            background-color: white;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .user-info {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #1890ff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .username {
+            font-weight: bold;
+        }
+        .user-type {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .nav-section {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .nav-title {
+            padding: 0 20px;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .nav-item:hover {
+            background-color: #f0f7ff;
+            color: #1890ff;
+        }
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            background-color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .action-btn i {
+            margin-right: 5px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .storage-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .storage-text {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #1890ff;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .file-list {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .file-header {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+            padding: 15px 20px;
+            background-color: #fafafa;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .file-item {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        .file-item:hover {
+            background-color: #f9f9f9;
+        }
+        .file-name {
+            display: flex;
+            align-items: center;
+        }
+        .file-icon {
+            margin-right: 10px;
+            color: #1890ff;
+        }
+        .file-size, .file-type, .file-time {
+            font-size: 14px;
+            color: #666;
+        }
+        .logout-btn {
+            color: #666;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .logout-btn:hover {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .action-link {
+            color: #1890ff;
+            text-decoration: none;
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #1890ff;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .action-link:hover {
+            background-color: #1890ff;
+            color: white;
+        }
+        .file-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+         .nav-item.active {
+            background-color: #e6f7ff;
+            color: #1890ff;
+            border-right: 3px solid #1890ff;
+        }
+        
+        .file-count {
+            background-color: #1890ff;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <div class="user-info">
+            <div class="avatar">{{ user.username|first|upper }}</div>
+            <div>
+                <div class="username">{{ user.username }}</div>
+                <div class="user-type">开放型会员</div>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-title">分类</div>
+            <a href="{% url 'disk:home' %}" class="nav-item {% if current_type == 'all' %}active{% endif %}">
+                <i>📁</i> 我的文件
+                <span class="file-count">{{ file_stats.all }}</span>
+            </a>
+            <a href="{% url 'disk:images' %}" class="nav-item {% if current_type == 'image' %}active{% endif %}">
+                <i>🖼️</i> 图片
+                <span class="file-count">{{ file_stats.image }}</span>
+            </a>
+            <a href="{% url 'disk:documents' %}" class="nav-item {% if current_type == 'document' %}active{% endif %}">
+                <i>📄</i> 文档
+                <span class="file-count">{{ file_stats.document }}</span>
+            </a>
+            <a href="{% url 'disk:videos' %}" class="nav-item {% if current_type == 'video' %}active{% endif %}">
+                <i>🎬</i> 视频
+                <span class="file-count">{{ file_stats.video }}</span>
+            </a>
+            <a href="{% url 'disk:audios' %}" class="nav-item {% if current_type == 'audio' %}active{% endif %}">
+                <i>🎵</i> 音频
+                <span class="file-count">{{ file_stats.audio }}</span>
+            </a>
+            <a href="{% url 'disk:trash' %}" class="nav-item {% if current_type == 'trash' %}active{% endif %}">
+                <i>🗑️</i> 回收站
+                <span class="file-count">{{ file_stats.trash }}</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- 主内容区域 -->
+    <div class="main-content">
+        <div class="header">
+            <div class="header-title">
+                {% if current_type == 'all' %}全部文件
+                {% elif current_type == 'image' %}图片文件
+                {% elif current_type == 'document' %}文档文件
+                {% elif current_type == 'video' %}视频文件
+                {% elif current_type == 'audio' %}音频文件
+                {% else %}其他文件
+                {% endif %}
+            </div>
+            <div class="header-actions">
+                <!-- 上传表单 -->
+                <form action="{% url 'disk:upload' %}" method="post" enctype="multipart/form-data" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="file" name="file" id="fileInput" style="display: none;" onchange="this.form.submit()">
+                    <button type="button" class="action-btn" onclick="document.getElementById('fileInput').click()">
+                        <i>📤</i> 上传文件
+                    </button>
+                </form>
+                <a href="{% url 'disk:logout' %}" class="logout-btn">退出登录</a>
+            </div>
+        </div>
+        
+        <div class="content">
+            <!-- 消息显示 -->
+            <div class="messages">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="storage-info">
+                <div class="storage-text">
+                    已使用 {{ storage_used|filesizeformat }} / {{ storage_limit|filesizeformat }} ({{ storage_percent|floatformat:1 }}%)
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" style="width: {{ storage_percent }}%;"></div>
+                </div>
+            </div>
+            
+            <div class="file-list">
+                <div class="file-header">
+                    <div>文件名</div>
+                    <div>大小</div>
+                    <div>类型</div>
+                    <div>上传时间</div>
+                    <div>操作</div>
+                </div>
+                
+                {% if files %}
+                    {% for file in files %}
+                        <div class="file-item">
+                            <div class="file-name">
+                                <span class="file-icon">
+                                    {% if file.file_type == 'image' %}
+                                        🖼️
+                                    {% elif file.file_type == 'document' %}
+                                        📄
+                                    {% elif file.file_type == 'video' %}
+                                        🎬
+                                    {% elif file.file_type == 'audio' %}
+                                        🎵
+                                    {% else %}
+                                        📦
+                                    {% endif %}
+                                </span>
+                                {{ file.name }}
+                            </div>
+                            <div class="file-size">{{ file.size|filesizeformat }}</div>
+                            <div class="file-type">
+                                {% if file.file_type == 'image' %}
+                                    图片
+                                {% elif file.file_type == 'document' %}
+                                    文档
+                                {% elif file.file_type == 'video' %}
+                                    视频
+                                {% elif file.file_type == 'audio' %}
+                                    音频
+                                {% else %}
+                                    其他
+                                {% endif %}
+                            </div>
+                            <div class="file-time">{{ file.upload_time|date:"Y-m-d H:i" }}</div>
+                            <div class="file-actions">
+                                <a href="{% url 'disk:download' file.id %}" class="action-link">下载</a>
+                                <a href="{% url 'disk:delete' file.id %}" class="action-link" 
+                                   onclick="return confirm('确定要删除 {{ file.name }} 吗？')">删除</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            {% if current_type == 'image' %}🖼️
+                            {% elif current_type == 'document' %}📄
+                            {% elif current_type == 'video' %}🎬
+                            {% elif current_type == 'audio' %}🎵
+                            {% else %}📁
+                            {% endif %}
+                        </div>
+                        <h3>暂无文件</h3>
+                        <p>
+                            {% if current_type == 'image' %}
+                                还没有上传任何图片文件
+                            {% elif current_type == 'document' %}
+                                还没有上传任何文档文件
+                            {% elif current_type == 'video' %}
+                                还没有上传任何视频文件
+                            {% elif current_type == 'audio' %}
+                                还没有上传任何音频文件
+                            {% else %}
+                                还没有上传任何文件
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
